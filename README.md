@@ -60,27 +60,11 @@ No frameworks. No libraries. Pure logic.
 
 Simply open index.html in your browser
 
-That’s it. No installation required.
-
-🎯 What I Learned
-
-Game state management
-
-AI logic implementation
-
-DOM manipulation
-
-Clean UI structuring
-
-Score tracking system
-
-SVG animation handling
-
-Difficulty scaling logic
-
 ❤️ Built With Passion
 
 “Anish built it by blessing of God.”
+
+🔗 Live Demo: [<a href='https://ram77-code.github.io/Anish_Gamer/'>See here</a>] 
 
 Crafted with logic, design focus, and continuous learning.
 
@@ -102,8 +86,6 @@ So I added:
 ✅ Fully Responsive UI  
 ✅ Dynamic Canvas Background  
 
-Built using pure HTML, CSS, and JavaScript — no frameworks.
-
 The hardest part?  
 Designing the AI logic and handling different difficulty behaviors cleanly.
 
@@ -115,8 +97,8 @@ This project helped me improve:
 
 Try beating Hard mode if you can 👀  
 
-🔗 Live Demo: [<a href='https://ram77-code.github.io/Anish_Gamer/'>See here</a>] 
-💻 GitHub: [<a href='https://github.com/Ram77-code/Anish_Gamer'>Repo here<a/>]
+
+
 
 
 
