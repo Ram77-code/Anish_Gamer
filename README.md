@@ -115,8 +115,8 @@ This project helped me improve:
 
 Try beating Hard mode if you can 👀  
 
-🔗 Live Demo: [Your Link]  
-💻 GitHub: [https://github.com/Ram77-code/Anish_Gamer]
+🔗 Live Demo: [<a href='https://ram77-code.github.io/Anish_Gamer/'>See here</a>] 
+💻 GitHub: [<a href='https://github.com/Ram77-code/Anish_Gamer'>Repo here<a/>]
 
 
 
