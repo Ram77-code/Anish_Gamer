@@ -1,109 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tic-Tac-Toe with Anish</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Toe with Anish</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Audiowide"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
 
-  <div id="splash-screen">
-        <div class="splash-content">
-            <h1 class="glow-text">TIC-TAC-TOE</h1>
-            
-            <button id="start-btn" class="btn btn-primary rounded-pill px-3" type="button">START GAME</button>
-        </div>
+    <div class="container">
+    <div id="splash-screen">
+      <div class="splash-content">
+        <h1 class="glow-text">TIC-TAC-TOE</h1>
+
+        <button
+          id="start-btn"
+          class="btn btn-primary rounded-pill px-3"
+          type="button"
+        >
+          START GAME
+        </button>
+      </div>
+    </div>
     </div>
 
     <canvas id="bg-canvas"></canvas>
 
-    <div class="welcome-overlay" id="welcomeOverlay">
-        <h1>WELCOME 2 THE GAME</h1>
+    <div class="container"><div class="welcome-overlay" id="welcomeOverlay">
+      <h1>WELCOME 2 THE GAME</h1>
+    </div>
     </div>
 
+    <div class="game-container" id="gameContainer">
+      <canvas id="bg-canvas"></canvas>
 
-  <div class="game-container" id="gameContainer">
-  <canvas id="bg-canvas"></canvas>
+      <div class="container">
+        <header class="header">
+          <h1 class="title">
+            <span class="title-icon">*</span>
+            Tic-Tac-Toe with Anish
+            <span class="title-badge">AI</span>
+          </h1>
+          <p class="subtitle">Challenge the unbeatable AI</p>
+        </header>
 
-  <div class="container">
-    <header class="header">
-      <h1 class="title">
-        <span class="title-icon">*</span>
-        Tic-Tac-Toe with Anish
-        <span class="title-badge">AI</span>
-      </h1>
-      <p class="subtitle">Challenge the unbeatable AI</p>
-    </header>
+        <!-- Difficulty Selector -->
+        <div class="difficulty-bar">
+          <button class="diff-btn active" data-diff="easy">Easy</button>
+          <button class="diff-btn" data-diff="medium">Medium</button>
+          <button class="diff-btn" data-diff="hard">Hard</button>
+        </div>
 
-    <!-- Difficulty Selector -->
-    <div class="difficulty-bar">
-      <button class="diff-btn active" data-diff="easy">Easy</button>
-      <button class="diff-btn" data-diff="medium">Medium</button>
-      <button class="diff-btn" data-diff="hard">Hard</button>
-    </div>
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <div class="score-card you">
+            <span class="score-label">You (X)</span>
+            <span class="score-value" id="score-x">0</span>
+          </div>
+          <div class="score-card draw">
+            <span class="score-label">Draw</span>
+            <span class="score-value" id="score-draw">0</span>
+          </div>
+          <div class="score-card ai">
+            <span class="score-label">AI (O)</span>
+            <span class="score-value" id="score-o">0</span>
+          </div>
+        </div>
 
-    <!-- Scoreboard -->
-    <div class="scoreboard">
-      <div class="score-card you">
-        <span class="score-label">You (X)</span>
-        <span class="score-value" id="score-x">0</span>
+        <!-- Status -->
+        <div class="status" id="status">Your turn - tap a cell</div>
+
+        <!-- Board -->
+        <div class="board" id="board">
+          <div class="cell" data-index="0"></div>
+          <div class="cell" data-index="1"></div>
+          <div class="cell" data-index="2"></div>
+          <div class="cell" data-index="3"></div>
+          <div class="cell" data-index="4"></div>
+          <div class="cell" data-index="5"></div>
+          <div class="cell" data-index="6"></div>
+          <div class="cell" data-index="7"></div>
+          <div class="cell" data-index="8"></div>
+        </div>
+
+        <!-- Win line overlay (SVG) -->
+        <svg class="win-line-svg" id="win-line-svg" viewBox="0 0 312 312">
+          <line id="win-line" x1="0" y1="0" x2="0" y2="0" />
+        </svg>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button class="btn btn-restart" id="btn-restart">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="23 4 23 10 17 10" />
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+            </svg>
+            New Game
+          </button>
+          <button class="btn btn-sound" id="btn-sound" title="Toggle sound">
+            <svg
+              id="icon-sound-on"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+            <svg
+              id="icon-sound-off"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="display: none"
+            >
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          </button>
+        </div>
+
+        <footer class="footer">
+          Anish can built it by blessing of God. <span class="heart">❤️</span>
+        </footer>
       </div>
-      <div class="score-card draw">
-        <span class="score-label">Draw</span>
-        <span class="score-value" id="score-draw">0</span>
-      </div>
-      <div class="score-card ai">
-        <span class="score-label">AI (O)</span>
-        <span class="score-value" id="score-o">0</span>
-      </div>
     </div>
 
-    <!-- Status -->
-    <div class="status" id="status">Your turn - tap a cell</div>
-
-    <!-- Board -->
-    <div class="board" id="board">
-      <div class="cell" data-index="0"></div>
-      <div class="cell" data-index="1"></div>
-      <div class="cell" data-index="2"></div>
-      <div class="cell" data-index="3"></div>
-      <div class="cell" data-index="4"></div>
-      <div class="cell" data-index="5"></div>
-      <div class="cell" data-index="6"></div>
-      <div class="cell" data-index="7"></div>
-      <div class="cell" data-index="8"></div>
-    </div>
-
-    <!-- Win line overlay (SVG) -->
-    <svg class="win-line-svg" id="win-line-svg" viewBox="0 0 312 312">
-      <line id="win-line" x1="0" y1="0" x2="0" y2="0" />
-    </svg>
-
-    <!-- Controls -->
-    <div class="controls">
-      <button class="btn btn-restart" id="btn-restart">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        New Game
-      </button>
-      <button class="btn btn-sound" id="btn-sound" title="Toggle sound">
-        <svg id="icon-sound-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-        <svg id="icon-sound-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-      </button>
-    </div>
-
-    <footer class="footer">
-      Anish can built it by blessing of God. <span class="heart">❤️</span>
-    </footer>
-  </div>
-  </div>
-
-  <script src="game.js"></script>
-</body>
+    <script src="game.js"></script>
+  </body>
 </html>
