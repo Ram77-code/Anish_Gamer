@@ -8,8 +8,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
+
+  <div id="splash-screen">
+        <div class="splash-content">
+            <h1 class="glow-text">TIC-TAC-TOE</h1>
+            
+            <button id="start-btn" class="btn btn-primary rounded-pill px-3" type="button">START GAME</button>
+        </div>
+    </div>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <h1>WELCOME 2 THE GAME</h1>
+    </div>
+
+
+  <div class="game-container" id="gameContainer">
   <canvas id="bg-canvas"></canvas>
 
   <div class="container">
@@ -81,6 +101,7 @@
     <footer class="footer">
       Anish can built it by blessing of God. <span class="heart">❤️</span>
     </footer>
+  </div>
   </div>
 
   <script src="game.js"></script>
