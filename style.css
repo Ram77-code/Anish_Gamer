@@ -480,3 +480,108 @@ body {
     padding: 6px 4px;
   }
 }
+
+/* --- FIX: RESPONSIVENESS --- */
+body {
+    margin: 0;
+    min-height: 100vh; /* Changed from fixed height to min-height */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Allows scrolling if game is tall */
+}
+
+/* --- SPLASH SCREEN & OVERLAY --- */
+#splash-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #19043d, #01100f);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    color: white;
+}
+
+.glow-text {
+    font-size: clamp(2rem, 8vw, 4rem); /* Responsive font size */
+    letter-spacing: 8px;
+    animation: pulseGlow 2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from { text-shadow: 0 0 10px #00d4ff; }
+    to { text-shadow: 0 0 30px #00d4ff, 0 0 50px #fff; }
+}
+
+#start-btn {
+    margin-top: 30px;
+    padding: 15px 40px;
+    background: transparent;
+    border: 2px solid #00d4ff;
+    color: #00d4ff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    
+}
+
+#start-btn:hover {
+    background: #00d4ff;
+    color: #000;
+    box-shadow: 0 0 20px #00d4ff;
+}
+
+body {
+    margin: 0;
+    overflow: hidden; /* Hide scrollbar during the animation */
+}
+
+/* Add this to your existing .font-effect-neon or h1 inside the welcome overlay */
+.welcome-overlay h1 {
+    animation: textPop 0.5s ease-out infinite alternate;
+    font-family: "Audiowide", sans-serif;
+}
+
+@keyframes textPop {
+    0% { transform: scale(1); text-shadow: 0 0 10px #fff; }
+    100% { transform: scale(1.1); text-shadow: 0 0 20px #0fa, 0 0 30px #0fa; }
+}
+
+.welcome-overlay {
+    position: fixed; /* Ensures it covers the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #333; /* Dark background example */
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it is on top of other content */
+    opacity: 1;
+    /* Add the animation properties */
+    animation-name: fadeOutOverlay;
+    animation-duration: 2s; /* Duration of the animation */
+    animation-fill-mode: forwards; /* Keep the final state (hidden) */
+    animation-delay: 3s; /* Delay before animation starts (e.g., show welcome for 3s first) */
+}
+
+@keyframes fadeOutOverlay {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden; /* Hide element completely after animation */
+    }
+}
+
+.game-container {
+    display: none; /* Hide game content initially */
+    /* Add styles for your game here */
+}
+
+
+

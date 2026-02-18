@@ -2,40 +2,151 @@
    AI Tic-Tac-Toe -- Game Logic
    ============================================================ */
 
+// --- VARIABLES ---
+const startBtn = document.getElementById("start-btn");
+const splash = document.getElementById("splash-screen");
+const welcomeOverlay = document.getElementById("welcomeOverlay");
+const gameContainer = document.getElementById("gameContainer");
+const canvas = document.getElementById("bg-canvas");
+const ctx = canvas.getContext("2d");
+
+let confettiActive = false;
+let particles = [];
+
+// --- CONFETTI LOGIC ---
+function startConfetti() {
+  confettiActive = true;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: -20,
+      size: Math.random() * 8 + 4,
+      // Neon colors to match your theme
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+      speed: Math.random() * 3 + 2,
+      angle: Math.random() * 6.28,
+      rotation: Math.random() * 0.2, // For spinning effect
+    };
+  }
+
+  function animate() {
+    if (!confettiActive) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Keep generating particles until we hit a limit
+    if (particles.length < 70) {
+      particles.push(createParticle());
+    }
+
+    particles.forEach((p, i) => {
+      p.y += p.speed;
+      p.x += Math.sin(p.angle) * 1;
+      p.angle += p.rotation;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      ctx.restore();
+
+      // Remove particles that fall off screen
+      if (p.y > canvas.height) {
+        particles.splice(i, 1);
+      }
+    });
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// --- EVENT LISTENERS ---
+
+// 1. Initial Start Button Click
+startBtn.addEventListener("click", () => {
+  // Hide Landing Page
+  splash.style.display = "none";
+
+  // Show Welcome Page (Starts the CSS animation)
+  welcomeOverlay.style.display = "flex";
+
+  // Start the Confetti
+  startConfetti();
+});
+
+// 2. Wait for Welcome Animation to Finish
+document.addEventListener("DOMContentLoaded", () => {
+  welcomeOverlay.addEventListener("animationend", () => {
+    // Stop the confetti loop
+    confettiActive = false;
+    particles = [];
+
+    // Hide Welcome and Show Game
+    welcomeOverlay.style.display = "none";
+    gameContainer.style.display = "block";
+
+    // Ensure scrolling is allowed if game is tall
+    document.body.style.overflow = "auto";
+  });
+});
+
+// 3. Handle Window Resize (Keeps canvas full screen)
+window.addEventListener("resize", () => {
+  if (confettiActive) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+});
+
+// --- YOUR ORIGINAL GAME LOGIC CONTINUES HERE ---
+
 (function () {
-  'use strict';
+  "use strict";
 
   // ---- Constants ----
-  const HUMAN = 'X';
-  const AI_PLAYER = 'O';
+  const HUMAN = "X";
+  const AI_PLAYER = "O";
   const WIN_COMBOS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-    [0, 4, 8], [2, 4, 6]             // diags
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8], // rows
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8], // cols
+    [0, 4, 8],
+    [2, 4, 6], // diags
   ];
 
   // ---- State ----
   let board = Array(9).fill(null);
   let gameOver = false;
   let aiThinking = false;
-  let difficulty = 'easy'; // easy | medium | hard
+  let difficulty = "easy"; // easy | medium | hard
   let scores = { x: 0, o: 0, draw: 0 };
   let soundEnabled = true;
 
   // ---- DOM refs ----
-  const cells = document.querySelectorAll('.cell');
-  const statusEl = document.getElementById('status');
-  const scoreXEl = document.getElementById('score-x');
-  const scoreOEl = document.getElementById('score-o');
-  const scoreDrawEl = document.getElementById('score-draw');
-  const btnRestart = document.getElementById('btn-restart');
-  const btnSound = document.getElementById('btn-sound');
-  const iconSoundOn = document.getElementById('icon-sound-on');
-  const iconSoundOff = document.getElementById('icon-sound-off');
-  const diffBtns = document.querySelectorAll('.diff-btn');
-  const winLineSvg = document.getElementById('win-line-svg');
-  const winLine = document.getElementById('win-line');
-  const boardEl = document.getElementById('board');
+  const cells = document.querySelectorAll(".cell");
+  const statusEl = document.getElementById("status");
+  const scoreXEl = document.getElementById("score-x");
+  const scoreOEl = document.getElementById("score-o");
+  const scoreDrawEl = document.getElementById("score-draw");
+  const btnRestart = document.getElementById("btn-restart");
+  const btnSound = document.getElementById("btn-sound");
+  const iconSoundOn = document.getElementById("icon-sound-on");
+  const iconSoundOff = document.getElementById("icon-sound-off");
+  const diffBtns = document.querySelectorAll(".diff-btn");
+  const winLineSvg = document.getElementById("win-line-svg");
+  const winLine = document.getElementById("win-line");
+  const boardEl = document.getElementById("board");
 
   // ---- Audio (Web Audio API) ----
   let audioCtx;
@@ -53,7 +164,7 @@
       const ctx = getAudioCtx();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = type || 'sine';
+      osc.type = type || "sine";
       osc.frequency.value = freq;
       gain.gain.value = volume || 0.12;
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
@@ -61,76 +172,85 @@
       gain.connect(ctx.destination);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + duration);
-    } catch (_) { /* ignore audio errors */ }
+    } catch (_) {
+      /* ignore audio errors */
+    }
   }
 
   function soundPlace() {
-    playTone(520, 0.12, 'sine', 0.15);
+    playTone(520, 0.12, "sine", 0.15);
   }
 
   function soundAIPlace() {
-    playTone(340, 0.15, 'triangle', 0.12);
+    playTone(340, 0.15, "triangle", 0.12);
   }
 
   function soundWin() {
     [0, 100, 200, 300].forEach((delay, i) => {
-      setTimeout(() => playTone(440 + i * 110, 0.25, 'sine', 0.13), delay);
+      setTimeout(() => playTone(440 + i * 110, 0.25, "sine", 0.13), delay);
     });
   }
 
   function soundLose() {
     [0, 150, 300].forEach((delay, i) => {
-      setTimeout(() => playTone(300 - i * 60, 0.3, 'sawtooth', 0.08), delay);
+      setTimeout(() => playTone(300 - i * 60, 0.3, "sawtooth", 0.08), delay);
     });
   }
 
   function soundDraw() {
-    playTone(400, 0.3, 'triangle', 0.1);
+    playTone(400, 0.3, "triangle", 0.1);
   }
 
   // ---- Particles ----
   function spawnParticles(x, y, color, count) {
     for (let i = 0; i < count; i++) {
-      const el = document.createElement('div');
-      el.className = 'particle';
+      const el = document.createElement("div");
+      el.className = "particle";
       const size = Math.random() * 6 + 3;
       const angle = Math.random() * Math.PI * 2;
       const dist = Math.random() * 60 + 30;
-      el.style.width = size + 'px';
-      el.style.height = size + 'px';
+      el.style.width = size + "px";
+      el.style.height = size + "px";
       el.style.background = color;
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      el.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
-      el.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      el.style.setProperty("--dy", Math.sin(angle) * dist + "px");
       document.body.appendChild(el);
-      el.addEventListener('animationend', () => el.remove());
+      el.addEventListener("animationend", () => el.remove());
     }
   }
 
   function spawnConfetti() {
-    const colors = ['#f472b6', '#38bdf8', '#a78bfa', '#facc15', '#34d399', '#fb923c'];
+    const colors = [
+      "#f472b6",
+      "#38bdf8",
+      "#a78bfa",
+      "#facc15",
+      "#34d399",
+      "#fb923c",
+    ];
     for (let i = 0; i < 40; i++) {
       setTimeout(() => {
-        const el = document.createElement('div');
-        el.className = 'confetti';
+        const el = document.createElement("div");
+        el.className = "confetti";
         const size = Math.random() * 8 + 4;
-        el.style.width = size + 'px';
-        el.style.height = size + 'px';
+        el.style.width = size + "px";
+        el.style.height = size + "px";
         el.style.background = colors[Math.floor(Math.random() * colors.length)];
-        el.style.left = Math.random() * window.innerWidth + 'px';
-        el.style.top = Math.random() * window.innerHeight * 0.4 + 'px';
-        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        el.style.left = Math.random() * window.innerWidth + "px";
+        el.style.top = Math.random() * window.innerHeight * 0.4 + "px";
+        el.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
         document.body.appendChild(el);
-        el.addEventListener('animationend', () => el.remove());
+        el.addEventListener("animationend", () => el.remove());
       }, i * 30);
     }
   }
 
   // ---- Background Canvas Animation ----
   function initBgCanvas() {
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("bg-canvas");
+    const ctx = canvas.getContext("2d");
     let w, h;
     const dots = [];
     const DOT_COUNT = 60;
@@ -140,7 +260,7 @@
       h = canvas.height = window.innerHeight;
     }
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
 
     for (let i = 0; i < DOT_COUNT; i++) {
       dots.push({
@@ -178,7 +298,7 @@
         if (d.y < 0 || d.y > h) d.vy *= -1;
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(108, 99, 255, 0.3)';
+        ctx.fillStyle = "rgba(108, 99, 255, 0.3)";
         ctx.fill();
       }
       requestAnimationFrame(draw);
@@ -188,7 +308,7 @@
 
   // ---- AI (Minimax) ----
   function getAvailable(b) {
-    return b.map((v, i) => v === null ? i : null).filter(v => v !== null);
+    return b.map((v, i) => (v === null ? i : null)).filter((v) => v !== null);
   }
 
   function checkWinner(b) {
@@ -198,7 +318,7 @@
         return { winner: b[a], combo };
       }
     }
-    if (b.every(v => v !== null)) return { winner: 'draw', combo: null };
+    if (b.every((v) => v !== null)) return { winner: "draw", combo: null };
     return null;
   }
 
@@ -256,11 +376,11 @@
   }
 
   function getAIMove(b) {
-    if (difficulty === 'easy') {
+    if (difficulty === "easy") {
       // 20% chance of optimal move
       return Math.random() < 0.2 ? getBestMove(b) : getRandomMove(b);
     }
-    if (difficulty === 'medium') {
+    if (difficulty === "medium") {
       // 60% chance of optimal move
       return Math.random() < 0.6 ? getBestMove(b) : getRandomMove(b);
     }
@@ -291,31 +411,31 @@
 
   function showWinLine(combo) {
     const coords = getLineCoordsForCombo(combo);
-    winLine.setAttribute('x1', coords.x1);
-    winLine.setAttribute('y1', coords.y1);
-    winLine.setAttribute('x2', coords.x2);
-    winLine.setAttribute('y2', coords.y2);
+    winLine.setAttribute("x1", coords.x1);
+    winLine.setAttribute("y1", coords.y1);
+    winLine.setAttribute("x2", coords.x2);
+    winLine.setAttribute("y2", coords.y2);
     // Reset animation
-    winLine.style.animation = 'none';
+    winLine.style.animation = "none";
     void winLine.offsetWidth; // trigger reflow
-    winLine.style.animation = '';
-    winLineSvg.classList.add('visible');
+    winLine.style.animation = "";
+    winLineSvg.classList.add("visible");
   }
 
   function hideWinLine() {
-    winLineSvg.classList.remove('visible');
+    winLineSvg.classList.remove("visible");
   }
 
   // ---- Render ----
   function render() {
     cells.forEach((cell, i) => {
       const val = board[i];
-      cell.textContent = val || '';
-      cell.classList.remove('x', 'o', 'taken', 'winner');
+      cell.textContent = val || "";
+      cell.classList.remove("x", "o", "taken", "winner");
       if (val === HUMAN) {
-        cell.classList.add('x', 'taken');
+        cell.classList.add("x", "taken");
       } else if (val === AI_PLAYER) {
-        cell.classList.add('o', 'taken');
+        cell.classList.add("o", "taken");
       }
     });
     scoreXEl.textContent = scores.x;
@@ -325,13 +445,13 @@
 
   function setStatus(text, cls) {
     statusEl.textContent = text;
-    statusEl.className = 'status' + (cls ? ' ' + cls : '');
+    statusEl.className = "status" + (cls ? " " + cls : "");
   }
 
   function bumpScore(el) {
-    el.classList.remove('bump');
+    el.classList.remove("bump");
     void el.offsetWidth;
-    el.classList.add('bump');
+    el.classList.add("bump");
   }
 
   // ---- Handle end ----
@@ -341,26 +461,26 @@
     if (result.winner === HUMAN) {
       scores.x++;
       bumpScore(scoreXEl);
-      setStatus('You win!', 'win-x');
+      setStatus("You win!", "win-x");
       soundWin();
       spawnConfetti();
       if (result.combo) {
-        result.combo.forEach(i => cells[i].classList.add('winner'));
+        result.combo.forEach((i) => cells[i].classList.add("winner"));
         showWinLine(result.combo);
       }
     } else if (result.winner === AI_PLAYER) {
       scores.o++;
       bumpScore(scoreOEl);
-      setStatus('AI wins!', 'win-o');
+      setStatus("AI wins!", "win-o");
       soundLose();
       if (result.combo) {
-        result.combo.forEach(i => cells[i].classList.add('winner'));
+        result.combo.forEach((i) => cells[i].classList.add("winner"));
         showWinLine(result.combo);
       }
     } else {
       scores.draw++;
       bumpScore(scoreDrawEl);
-      setStatus("It's a draw!", 'draw');
+      setStatus("It's a draw!", "draw");
       soundDraw();
     }
     render();
@@ -370,12 +490,15 @@
   function aiTurn() {
     if (gameOver) return;
     aiThinking = true;
-    setStatus('AI is thinking...');
+    setStatus("AI is thinking...");
 
     const delay = 350 + Math.random() * 300;
     setTimeout(() => {
       const move = getAIMove(board);
-      if (move === -1 || move === undefined) { aiThinking = false; return; }
+      if (move === -1 || move === undefined) {
+        aiThinking = false;
+        return;
+      }
 
       board[move] = AI_PLAYER;
       render();
@@ -386,15 +509,15 @@
       spawnParticles(
         cellRect.left + cellRect.width / 2,
         cellRect.top + cellRect.height / 2,
-        '#38bdf8',
-        8
+        "#38bdf8",
+        8,
       );
 
       const result = checkWinner(board);
       if (result) {
         handleEnd(result);
       } else {
-        setStatus('Your turn -- tap a cell');
+        setStatus("Your turn -- tap a cell");
       }
       aiThinking = false;
     }, delay);
@@ -415,8 +538,8 @@
     spawnParticles(
       cellRect.left + cellRect.width / 2,
       cellRect.top + cellRect.height / 2,
-      '#f472b6',
-      8
+      "#f472b6",
+      8,
     );
 
     const result = checkWinner(board);
@@ -434,24 +557,24 @@
     gameOver = false;
     aiThinking = false;
     hideWinLine();
-    setStatus('Your turn -- tap a cell');
+    setStatus("Your turn -- tap a cell");
     render();
   }
 
   // ---- Event listeners ----
-  cells.forEach(cell => cell.addEventListener('click', handleCellClick));
-  btnRestart.addEventListener('click', resetGame);
+  cells.forEach((cell) => cell.addEventListener("click", handleCellClick));
+  btnRestart.addEventListener("click", resetGame);
 
-  btnSound.addEventListener('click', () => {
+  btnSound.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
-    iconSoundOn.style.display = soundEnabled ? '' : 'none';
-    iconSoundOff.style.display = soundEnabled ? 'none' : '';
+    iconSoundOn.style.display = soundEnabled ? "" : "none";
+    iconSoundOff.style.display = soundEnabled ? "none" : "";
   });
 
-  diffBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      diffBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  diffBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      diffBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
       difficulty = btn.dataset.diff;
       // Reset game when switching difficulty
       scores = { x: 0, o: 0, draw: 0 };
@@ -462,17 +585,17 @@
   // ---- Position the SVG overlay ----
   function positionWinSvg() {
     const boardRect = boardEl.getBoundingClientRect();
-    winLineSvg.style.position = 'fixed';
-    winLineSvg.style.left = boardRect.left + 'px';
-    winLineSvg.style.top = boardRect.top + 'px';
-    winLineSvg.style.width = boardRect.width + 'px';
-    winLineSvg.style.height = boardRect.height + 'px';
+    winLineSvg.style.position = "fixed";
+    winLineSvg.style.left = boardRect.left + "px";
+    winLineSvg.style.top = boardRect.top + "px";
+    winLineSvg.style.width = boardRect.width + "px";
+    winLineSvg.style.height = boardRect.height + "px";
   }
 
-  window.addEventListener('resize', positionWinSvg);
+  window.addEventListener("resize", positionWinSvg);
 
   // Use ResizeObserver for more reliable positioning
-  if (typeof ResizeObserver !== 'undefined') {
+  if (typeof ResizeObserver !== "undefined") {
     new ResizeObserver(positionWinSvg).observe(boardEl);
   }
 
@@ -481,4 +604,3 @@
   initBgCanvas();
   setTimeout(positionWinSvg, 50);
 })();
-
